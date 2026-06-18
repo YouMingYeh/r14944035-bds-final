@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peeps — Monetization Intelligence</title>
+<style>
+  :root { --bg:#0e1014; --card:#171a21; --line:#262b36; --ink:#e9edf4; --muted:#9aa4b2;
+          --accent:#6ea8fe; --good:#4ade80; --warn:#fbbf24; --bad:#f87171; --p:#a78bfa; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+  .wrap { max-width:1100px; margin:0 auto; padding:28px 20px 72px; }
+  h1 { font-size:24px; margin:0 0 2px; } .sub { color:var(--muted); margin:0 0 22px; font-size:14px; }
+  section { margin-top:30px; } section h2 { font-size:16px; margin:0 0 12px; }
+  .grid { display:grid; gap:13px; grid-template-columns:repeat(auto-fit,minmax(165px,1fr)); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:15px 17px; }
+  .kpi .label { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+  .kpi .val { font-size:26px; font-weight:700; margin-top:4px; } .kpi .note { color:var(--muted); font-size:12px; margin-top:3px; }
+  .accent{color:var(--accent)} .good{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)} .p{color:var(--p)}
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th,td { text-align:left; padding:7px 10px; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.03em; }
+  td.n,th.n { text-align:right; font-variant-numeric:tabular-nums; }
+  .bar { height:9px; background:var(--line); border-radius:5px; overflow:hidden; min-width:60px; }
+  .bar>i { display:block; height:100%; background:var(--accent); }
+  .bar.p>i{background:var(--p)} .bar.g>i{background:var(--good)}
+  .lever { display:flex; align-items:center; gap:14px; padding:11px 0; border-bottom:1px solid var(--line); }
+  .lever:last-child{border:0} .lever .nm{flex:1} .lever .amt{font-size:20px;font-weight:700;color:var(--good);min-width:90px;text-align:right}
+  .lever .pl{color:var(--muted);font-size:12px}
+  .gap { display:flex; align-items:flex-end; gap:26px; flex-wrap:wrap; }
+  .gap .big { font-size:34px; font-weight:800; line-height:1; } .gap .col{text-align:center}
+  .pill { display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; background:#222838; color:var(--accent); margin:2px 4px 2px 0; }
+  pre { white-space:pre-wrap; background:#0f131a; border:1px solid var(--line); border-radius:10px; padding:16px; font-size:13px; color:#d6deea; overflow:auto; }
+  .foot { color:var(--muted); font-size:12px; margin-top:30px; } .two{display:grid;gap:13px;grid-template-columns:1fr 1fr}
+  @media(max-width:680px){.two{grid-template-columns:1fr}}
+</style></head>
+<body><div class="wrap">
+  <h1>Peeps — Monetization Intelligence</h1>
+  <p class="sub">First-party production data (173k players) joined to RevenueCat revenue · diagnoses which lever has the most $ upside, then names who to action. <span id="src" class="muted"></span></p>
+
+  <div class="grid" id="kpis"></div>
+
+  <section><h2>① Diagnostic — which lever to pull (ranked by $ upside)</h2>
+    <div class="card" id="levers"></div>
+    <p class="sub" id="levnote" style="margin-top:9px"></p></section>
+
+  <section class="two">
+    <div><h2>② Why they pay — the wagering loop</h2>
+      <div class="card"><table id="wager"><thead><tr><th>Minigame</th><th class="n">Sessions</th><th class="n">Pcoins wagered</th></tr></thead><tbody></tbody></table>
+      <p class="sub" id="wagernote" style="margin-top:9px"></p></div></div>
+    <div><h2>③ Behaviour beats words (payer-rate lift)</h2>
+      <div class="card"><table id="lift"><thead><tr><th>Signal</th><th class="n">Low</th><th class="n">High</th><th class="n">Lift</th></tr></thead><tbody></tbody></table></div></div>
+  </section>
+
+  <section><h2>④ Propensity score — validated on a 20% holdout</h2>
+    <div class="card"><table id="deciles"><thead><tr><th>Score decile</th><th class="n">Players</th><th>Actual payer rate</th></tr></thead><tbody></tbody></table>
+    <p class="sub" id="decnote" style="margin-top:9px"></p></div></section>
+
+  <section class="two">
+    <div><h2>⑤ Convert more (breadth)</h2><div class="card" id="convert"></div></div>
+    <div><h2>⑥ Expand more (depth)</h2><div class="card" id="expand"></div></div>
+  </section>
+
+  <section class="two">
+    <div><h2>⑦ Retention × pay</h2><div class="card"><table id="ret"><thead><tr><th>Active days</th><th class="n">Players</th><th>Payer rate</th></tr></thead><tbody></tbody></table></div></div>
+    <div><h2>⑧ Geography</h2><div class="card"><table id="geo"><thead><tr><th>Country</th><th class="n">Players</th><th class="n">Payer%</th><th class="n">Revenue</th></tr></thead><tbody></tbody></table></div></div>
+  </section>
+
+  <section><h2>⑨ Agent brief (this week's action plan)</h2>
+    <div class="card"><pre id="brief">Loading…</pre></div></section>
+
+  <p class="foot" id="foot"></p>
+</div>
+<script src="data.js"></script>
+<script>
+const D = window.INSIGHTS, $=(id)=>document.getElementById(id);
+const money=n=>"$"+Math.round(n).toLocaleString(), num=n=>Number(n).toLocaleString();
+if(!D){document.body.innerHTML="<div class='wrap'><h1>No data</h1><p>Run <code>python3 src/run_pipeline.py</code>.</p></div>";}
+else{
+  const h=D.headline, rc=D.revenuecat_validation||{};
+  $("kpis").innerHTML=[
+    {l:"Players",v:num(h.players),n:"production DB",c:"accent"},
+    {l:"Paid conversion",v:h.payer_pct+"%",n:num(h.payers)+" payers",c:"bad"},
+    {l:"Lifetime revenue",v:money(h.total_usd),n:"≈ RevenueCat "+money(rc.rc_total_revenue_usd||0),c:"good"},
+    {l:"ARPPU",v:money(h.arppu_usd),n:"per paying user",c:""},
+    {l:"Stated vs revealed",v:h.stated_yes_payer_pct+"% / "+h.stated_no_payer_pct+"%",n:"said-yes vs said-no pay",c:"warn"},
+  ].map(k=>`<div class="card kpi"><div class="label">${k.l}</div><div class="val ${k.c}">${k.v}</div><div class="note">${k.n}</div></div>`).join("");
+
+  // levers
+  const lv=D.diagnostic.levers, maxL=Math.max(...lv.map(x=>x.est_upside_usd));
+  $("levers").innerHTML=lv.map(l=>`<div class="lever"><div class="nm"><b>${l.lever}</b><div class="pl">pool ${num(l.pool)} · ${l.assumption}</div>
+     <div class="bar g" style="margin-top:7px;max-width:340px"><i style="width:${100*l.est_upside_usd/maxL}%"></i></div></div>
+     <div class="amt">${money(l.est_upside_usd)}</div></div>`).join("");
+  $("levnote").textContent="Directional annual upside on real pools; confirm via live A/B. PRIME cross-sell leads because 3,211 pcoin buyers never subscribed.";
+
+  // wagering sink
+  const wg=D.why_pay.wagering_by_game, maxW=Math.max(...wg.map(x=>x.pcoins_wagered));
+  $("wager").querySelector("tbody").innerHTML=wg.map(g=>`<tr><td>${g.game_type}</td><td class="n">${num(g.sessions)}</td>
+     <td class="n">${num(g.pcoins_wagered)}<div class="bar" style="margin-top:4px"><i style="width:${100*g.pcoins_wagered/maxW}%"></i></div></td></tr>`).join("");
+  const cg=D.why_pay.cosmetics_gap, cm=D.convert_more;
+  $("wagernote").innerHTML=`<b>${cm.wagered_before_paying_pct}%</b> of payers wagered pcoins <i>before</i> first purchase, and <b>${cm.conversion_moment.same_day_pct}%</b> buy day-0. Players buy pcoins to keep betting. Cosmetics are dead: only <b>${cg.pct}%</b> own any.`;
+
+  // predictor lift
+  $("lift").querySelector("tbody").innerHTML=D.behavior_diff.predictor_lift.map(f=>`<tr><td>${f.feature}</td>
+     <td class="n">${f.low_pct}%</td><td class="n">${f.high_pct}%</td><td class="n ${f.lift>=2?'good':'muted'}">${f.lift}×</td></tr>`).join("");
+
+  // deciles
+  const dc=D.propensity, maxD=Math.max(...dc.decile_payer_rate.map(x=>x.payer_pct));
+  $("deciles").querySelector("tbody").innerHTML=dc.decile_payer_rate.map(d=>`<tr><td>${d.decile}${d.decile===10?' (top)':''}</td>
+     <td class="n">${num(d.players)}</td><td><div class="bar p"><i style="width:${100*d.payer_pct/maxD}%"></i></div><small class="muted">${d.payer_pct}%</small></td></tr>`).join("");
+  $("decnote").innerHTML=`Holdout base ${dc.holdout_base_payer_pct}% → top decile <b>${dc.top_decile_payer_pct}%</b> = <b>${dc.top_decile_lift}×</b> lift. Transparent additive score, validated on data it was not tuned on.`;
+
+  // convert / expand
+  const tp=cm.target_pool;
+  $("convert").innerHTML=`<div class="gap"><div class="col"><div class="big accent">${num(tp.high_propensity_nonpayers)}</div><div class="sub">high-propensity non-payers</div></div>
+    <div class="col"><div class="big">${cm.conversion_moment.same_day_pct}%</div><div class="sub">buy day-0 (impulse)</div></div></div>
+    <p class="sub" style="margin-top:10px">They already wager (avg ${num(tp.avg_wagered)} pcoins) but haven't bought. Target: ${cm.target_by_country.slice(0,3).map(c=>c.country_code+" "+num(c.targets)).join(", ")}.</p>`;
+  const ex=D.expand_more, pf=ex.purchase_freq, wc=ex.whale_concentration, pc=ex.prime_cross_sell;
+  $("expand").innerHTML=`<div class="gap"><div class="col"><div class="big warn">${pf[0].payers/D.headline.payers*100|0}%</div><div class="sub">buy only once</div></div>
+    <div class="col"><div class="big p">${money(wc.max_usd)}</div><div class="sub">top whale LTV</div></div>
+    <div class="col"><div class="big good">${num(pc.pcoin_buyers_not_prime)}</div><div class="sub">PRIME cross-sell pool</div></div></div>
+    <p class="sub" style="margin-top:10px">Median payer ${money(wc.median_usd)}, p99 ${money(wc.p99_usd)}. Repeat buyers wager more & streak longer than one-timers.</p>`;
+
+  // retention + geo
+  const rt=D.social_retention_geo.retention_x_pay, maxR=Math.max(...rt.map(x=>x.payer_pct));
+  $("ret").querySelector("tbody").innerHTML=rt.map(r=>`<tr><td>${r.bucket}</td><td class="n">${num(r.players)}</td>
+     <td><div class="bar g"><i style="width:${100*r.payer_pct/maxR}%"></i></div><small class="muted">${r.payer_pct}%</small></td></tr>`).join("");
+  $("geo").querySelector("tbody").innerHTML=D.social_retention_geo.geo.slice(0,8).map(g=>`<tr><td>${g.country_code}</td>
+     <td class="n">${num(g.players)}</td><td class="n">${g.payer_pct}%</td><td class="n">${money(g.usd)}</td></tr>`).join("");
+
+  fetch("recommendation.md").then(r=>r.ok?r.text():Promise.reject()).then(t=>{$("brief").textContent=t.replace(/<!--[\s\S]*?-->/g,"").trim();})
+    .catch(()=>{$("brief").textContent="Run `python3 agent/recommend.py` and copy outputs/recommendation.md next to this file.";});
+  $("foot").innerHTML=`Surveyed ${num(h.surveyed)} players · ${rc.note||''} · RevenueCat MAU ${num(rc.rc_active_users_28d||0)} (28d). Read-only demo; aggregates only (no PII).`;
+  $("src").textContent="Generated by the SQL pipeline.";
+}
+</script></body></html>

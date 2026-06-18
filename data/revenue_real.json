@@ -1,0 +1,54 @@
+{
+  "_source": "RevenueCat v2 API (project Peeps, proj3a4eb46e) pulled 2026-06-14 via MCP",
+  "_note": "Aggregate first-party REVEALED willingness-to-pay. Used as ground-truth calibration against stated WTP from surveys_raw.json. No per-player PII included.",
+  "overview_28d": {
+    "active_trials": 0,
+    "active_subscriptions": 90,
+    "mrr_usd": 400,
+    "revenue_28d_usd": 22883,
+    "new_customers_28d": 124649,
+    "active_users_28d": 157161
+  },
+  "revenue_total": {
+    "start_date": "2025-12-01",
+    "end_date": "2026-06-14",
+    "revenue_usd": 30663.72,
+    "revenue_type": "gross"
+  },
+  "initial_conversion_7d": {
+    "_desc": "share of new customers who make ANY purchase (incl. trial) within 7 days, cohorted by first-seen month",
+    "by_month": [
+      {"period_start": "2026-02-01", "new_customers": 8348,  "conversions_7d": 108,  "rate_pct": 1.29},
+      {"period_start": "2026-03-01", "new_customers": 21667, "conversions_7d": 171,  "rate_pct": 0.79},
+      {"period_start": "2026-04-01", "new_customers": 135542,"conversions_7d": 2230, "rate_pct": 1.65},
+      {"period_start": "2026-05-01", "new_customers": 17596, "conversions_7d": 166,  "rate_pct": 0.94}
+    ],
+    "total_new_customers": 183153,
+    "total_conversions_7d": 2675,
+    "blended_rate_pct": 1.46
+  },
+  "non_subscription_purchases": {
+    "_desc": "consumable pcoin purchases per month",
+    "by_month": [
+      {"period_start": "2026-03-01", "purchases": 292},
+      {"period_start": "2026-04-01", "purchases": 403},
+      {"period_start": "2026-05-01", "purchases": 4501},
+      {"period_start": "2026-06-01", "purchases": 766}
+    ],
+    "total": 5962
+  },
+  "price_points": {
+    "_desc": "live store catalog from RevenueCat offerings",
+    "pcoins_consumable": ["pcoin_1", "pcoin_5", "pcoin_25", "pcoin_100"],
+    "prime_subscription": ["peeps_prime_monthly", "peeps_prime_yearly"],
+    "current_offering": "prime"
+  },
+  "derived": {
+    "arpu_lifetime_usd": 0.167,
+    "arpu_28d_usd": 0.146,
+    "blended_paying_conversion_pct": 1.46,
+    "stated_considering_pcoins_pct": 42.5,
+    "stated_claim_bought_pcoins_pct": 7.1,
+    "stated_vs_revealed_gap_x": "5-30x overstatement of intent vs realized conversion"
+  }
+}

@@ -1,0 +1,8 @@
+# Production data — never commit (PII)
+data/_private/
+# Python
+__pycache__/
+*.pyc
+
+# legacy survey export (player uuids + free text)
+data/surveys_raw.json

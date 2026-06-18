@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size:A4; margin:19mm 17mm; @bottom-center{content:counter(page);color:#888;font-size:9pt;} }
+  body { font:10.6pt/1.5 "Helvetica Neue",Arial,sans-serif; color:#1a1a1a; }
+  h1 { font-size:21pt; margin:0 0 2pt; color:#0b3d66; }
+  h2 { font-size:13.5pt; color:#0b3d66; border-bottom:1.5px solid #0b3d66; padding-bottom:3px; margin:19px 0 8px; page-break-after:avoid; }
+  h3 { font-size:11pt; margin:13px 0 4px; color:#14507f; page-break-after:avoid; }
+  p { margin:0 0 8px; } .lead{font-size:11pt;color:#222;}
+  .meta{color:#555;font-size:10.3pt;margin:1px 0;} .links{font-size:9.7pt;color:#0b3d66;margin-top:6px;}
+  .links code{background:#eef3f8;padding:1px 5px;border-radius:3px;}
+  table{width:100%;border-collapse:collapse;margin:8px 0 12px;font-size:9.4pt;}
+  th,td{border:1px solid #cdd6e0;padding:4px 7px;text-align:left;vertical-align:top;}
+  th{background:#eef3f8;color:#0b3d66;} .n{text-align:right;font-variant-numeric:tabular-nums;}
+  .callout{background:#f4f8fc;border-left:4px solid #0b3d66;padding:9px 13px;margin:10px 0;border-radius:0 6px 6px 0;}
+  .kpis{display:flex;gap:9px;margin:10px 0 4px;}
+  .kpis .k{flex:1;border:1px solid #cdd6e0;border-radius:7px;padding:7px 9px;background:#fafcfe;}
+  .kpis .k b{display:block;font-size:15pt;color:#0b3d66;line-height:1.1;} .kpis .k span{font-size:8.2pt;color:#666;text-transform:uppercase;letter-spacing:.03em;}
+  .muted{color:#666;} .small{font-size:9pt;} ul{margin:4px 0 8px;padding-left:18px;} li{margin-bottom:3px;}
+  .pagebreak{page-break-before:always;}
+  .arch{border:1px solid #cdd6e0;border-radius:8px;padding:11px;margin:10px 0;background:#fbfdff;}
+  .row{display:flex;gap:8px;margin:6px 0;} .arrow{text-align:center;color:#0b3d66;font-size:12pt;margin:-2px 0;}
+  .box{flex:1;border:1.5px solid #0b3d66;border-radius:6px;padding:6px 9px;font-size:8.7pt;background:#fff;}
+  .box b{color:#0b3d66;} .box .s{color:#555;font-size:8pt;}
+  .stage{writing-mode:vertical-rl;transform:rotate(180deg);background:#0b3d66;color:#fff;border-radius:6px;padding:4px;font-size:8.3pt;font-weight:700;text-align:center;min-width:21px;}
+</style></head>
+<body>
+
+<h1>Designing a System That Monetizes Data</h1>
+<p class="lead" style="margin-top:0"><b>Peeps Monetization Intelligence</b> — turning a #1 social game's
+first-party production data into the one decision a studio with no data team can't make: where the next
+dollar comes from, and which players to action for it.</p>
+<p class="meta">Big Data Systems · Spring 2026 · National Taiwan University</p>
+<p class="meta">葉又銘 (Yu-Ming Yeh) · R14944035</p>
+<p class="links">GitHub: <code>https://github.com/YouMingYeh/r14944035-bds-final</code> · Live deploy: <span class="muted small">not deployed; dashboard runs from the repo</span></p>
+
+<div class="callout"><b>Thesis.</b> Peeps is a real social game (App Store #1, <b>173,336</b> players, ~30k DAU)
+that monetizes at just <b>1.92%</b> paid conversion. Its production database holds something no external
+vendor can obtain — every player's behaviour joined to their revenue. This system turns that first-party
+data into a <b>monetization diagnostic</b>: it finds <i>why</i> players pay, scores <i>who</i> will, and
+<b>ranks the levers by dollar upside</b>. Sold to small indie social-game studios that have the same data
+but no data team; <b>Peeps is the design partner and first case study.</b></div>
+
+<div class="kpis">
+  <div class="k"><b>173,336</b><span>Players (production)</span></div>
+  <div class="k"><b>1.92%</b><span>Paid conversion</span></div>
+  <div class="k"><b>$31.9k</b><span>Lifetime revenue ✓RC</span></div>
+  <div class="k"><b>3.9×</b><span>Stated-vs-revealed</span></div>
+  <div class="k"><b>3.1×</b><span>Model holdout lift</span></div>
+</div>
+
+<h2>1. Target Customer</h2>
+<p>The customer is the <b>solo founder or 2–5-person studio shipping a free-to-play social or casual mobile
+game</b> — the segment that lives on in-app purchases but has <b>no data analyst and no data engineer</b>.
+Concretely: 10k–500k MAU, one or two engineers doing everything, monetization set by guesswork.</p>
+<h3>The job they cannot do today</h3>
+<p>They sit on the exact data Peeps has — a behavioural database plus a RevenueCat/App Store revenue feed —
+but cannot answer the two questions that decide their revenue: <i>"why do my payers pay, and who else will?"</i>
+and <i>"should I chase more payers, or more spend per payer?"</i> Their status quo is a generic analytics
+dashboard (RevenueCat, GameAnalytics, Firebase) that reports <i>what</i> happened and never recommends
+<i>what to do</i>. A senior data hire to close that gap costs ~US$120k/yr — unjustifiable to set a $4.99 price.</p>
+<h3>Why this is the right wedge</h3>
+<ul>
+  <li><b>Acute pain, no in-house fix</b> — too small to hire a data team, too revenue-dependent to guess.</li>
+  <li><b>They already own the data</b> — we supply the missing intelligence layer, not the data, so there is no acquisition cost or privacy transfer.</li>
+  <li><b>Output is dollars</b> — the system ends in a ranked $-upside list, so willingness to pay is trivial to anchor (§4).</li>
+</ul>
+
+<h2>2. Evidence of Demand &amp; Willingness to Pay</h2>
+<p class="lead">The most important section, so it documents the full data-acquisition + analysis process — how we
+moved from "Peeps probably under-monetizes" to a quantified, per-player, revenue-validated claim.</p>
+
+<h3>2.1 Data acquisition — two joined first-party sources</h3>
+<table>
+  <tr><th>Source</th><th>How acquired</th><th>Scale</th><th>Role</th></tr>
+  <tr><td><b>Production Postgres</b></td><td>Full 47.5 GB <code>pg_dump</code> of the live Peeps DB, restored locally; analytical tables only.</td><td class="n">173,336 players</td><td>Behaviour, demographics, stated WTP (surveys)</td></tr>
+  <tr><td><b>RevenueCat</b></td><td>Pulled via API; the DB also mirrors it, so the two reconcile.</td><td class="n">$30.7k / 157k MAU</td><td><b>Revealed</b> revenue — source of truth</td></tr>
+</table>
+<p>The two join at <code>player.id</code> (= RevenueCat app_user_id). Pipeline revenue <b>$31,861</b> reconciles
+with RevenueCat's independent <b>$30,664</b> — the same first-party truth from two systems.</p>
+
+<h3>2.2 Why players pay — a wagering loop, not cosmetics</h3>
+<p>The dominant pcoin sink is a <b>competitive wagering economy</b>: players bet pcoins in head-to-head
+minigames (SPEED_CHALLENGE, GOMOKU, LOTTERY, FIGHTING) — tens of millions of pcoins in pots. Cosmetics are
+effectively dead (only <b>0.3%</b> of players own any). The causal signature is stark:</p>
+<div class="callout"><b>86.3%</b> of payers had wagered pcoins <i>before</i> their first purchase, and <b>56.4%</b>
+buy on day 0. Players buy currency to keep betting — so the conversion moment is the pcoin balance running low
+mid-game, not a cosmetics storefront.</div>
+
+<h3>2.3 Stated vs revealed willingness to pay (per player)</h3>
+<p>Joining the in-app survey (stated) to real purchases (revealed) at the player level resolves a question
+the survey alone cannot:</p>
+<table>
+  <tr><th>Signal</th><th class="n">Payer rate (low)</th><th class="n">Payer rate (high)</th><th class="n">Lift</th></tr>
+  <tr><td>Wagered pcoins (&gt;0)</td><td class="n">0.61%</td><td class="n">2.89%</td><td class="n"><b>4.7×</b></td></tr>
+  <tr><td>Stated intent to pay (survey)</td><td class="n">2.33%</td><td class="n">9.18%</td><td class="n">3.9×</td></tr>
+  <tr><td>Active ≥ 14 days</td><td class="n">0.93%</td><td class="n">2.97%</td><td class="n">3.2×</td></tr>
+  <tr><td>Hosted ≥ 10 minigames</td><td class="n">1.40%</td><td class="n">4.47%</td><td class="n">3.2×</td></tr>
+  <tr><td>Invited ≥ 1 friend</td><td class="n">1.60%</td><td class="n">3.80%</td><td class="n">2.4×</td></tr>
+</table>
+<p>Stated intent <i>is</i> predictive (3.9× ranking lift) but absolute conversion is tiny — most who say "yes"
+never pay — so pricing must be set off revealed behaviour, and <b>observed behaviour (wagering, 4.7×) outranks
+self-report</b>. This is the core methodological result: discount words, trust behaviour.</p>
+
+<h3>2.4 Competitor pricing &amp; the customer's willingness to pay</h3>
+<p>Incumbents are descriptive, not prescriptive: RevenueCat / GameAnalytics / Firebase / Amplitude report
+metrics; none output "which lever, which players, how many dollars". Pricing-research tools (Conjoint.ly,
+Qualtrics) are survey platforms decoupled from the studio's revenue. For a single app this system surfaces
+<b>~$17k/yr of ranked, addressable upside</b> (§3.4); priced at <b>$99–$299/month</b> it costs a small fraction
+of the revenue it recovers — a clear willingness-to-pay anchor.</p>
+
+<h2>3. Technical System</h2>
+<p>A <b>SQL-first pipeline</b> on the production database: ingest two first-party sources, process them into a
+per-player feature store and an analysis suite, and serve a diagnostic to a dashboard and an LLM agent. Heavy
+joins (1M+ sessions, 5.8M feedings) run in Postgres; Python only orchestrates and serializes.</p>
+
+<div class="arch">
+  <div class="row"><div class="stage">INGEST</div><div style="flex:1">
+    <div class="box"><b>Production Postgres</b> — <span class="s">player, survey_response, pcoin_transaction, prime_subscription_event, game_session, player_room … (173k players, restored from a 47.5 GB dump).</span></div>
+    <div class="box" style="margin-top:6px"><b>RevenueCat</b> — <span class="s">revenue source-of-truth, joined at player.id = app_user_id. Reconciles with the DB.</span></div>
+  </div></div>
+  <div class="arrow">▼</div>
+  <div class="row"><div class="stage">PROCESS<br>(SQL)</div><div style="flex:1">
+    <div class="box"><b>Feature store</b> (<code>00</code>) — <span class="s">one row per player: demographics + engagement + wagering + social + retention + stated WTP + revealed LTV + the is_payer label.</span></div>
+    <div class="box" style="margin-top:6px"><b>Analysis suite</b> (<code>10–60</code>) — <span class="s">why-pay · behaviour lift · propensity score (holdout-validated) · convert-more · expand-more · social/retention/geo.</span></div>
+    <div class="box" style="margin-top:6px"><b>Diagnostic</b> (<code>70</code>) — <span class="s">sizes each monetization lever in $ and ranks them.</span></div>
+  </div></div>
+  <div class="arrow">▼</div>
+  <div class="row"><div class="stage">SERVE</div><div style="flex:1">
+    <div class="box"><b>insights.json</b> → <b>dashboard</b> (read-only) + <b>agent</b> (<code>claude-opus-4-8</code>) — <span class="s">the agent writes the studio's weekly action plan: which lever, who to target, 2-week A/B. A PII gate guarantees only aggregates leave the DB.</span></div>
+  </div></div>
+</div>
+
+<h3>3.1 Data sources &amp; ingestion</h3>
+<p>Two first-party streams: the production Postgres (behaviour + surveys) and RevenueCat (revenue). In this
+case study both are batched (a restored dump + an API pull); in production each is a change-data-capture / event
+stream into an object store, so the feature store rebuilds incrementally and refunds/late surveys reprocess idempotently.</p>
+
+<h3>3.2 Storage &amp; processing — why SQL fits</h3>
+<p>The binding constraint is <b>joining many large behavioural tables per player</b> (1.0M game sessions, 5.8M
+pet feedings, 213k room memberships), not exotic compute. A set-based SQL feature store collapses each source
+per player before joining, so the whole pipeline runs in seconds and is trivially portable to a distributed
+warehouse (BigQuery / Spark SQL) by repartitioning on player_id — no logic change. The propensity model is a
+<b>transparent additive score</b> (weights on wagering, streak, activity, virality, stated intent) so a
+non-technical studio can audit why a player scored high; it is <b>validated on a 20% holdout</b> it was not
+tuned on.</p>
+
+<h3>3.3 The analyses (all four monetization questions)</h3>
+<table>
+  <tr><th>Question</th><th>Real finding</th></tr>
+  <tr><td><b>Why pay?</b></td><td>Wagering loop drives it; 86.3% wager before paying; pcoin_5 + pcoin_25 = $24.5k of $31.9k; cosmetics 0.3%.</td></tr>
+  <tr><td><b>Who pays? (behaviour diff + model)</b></td><td>Propensity holdout: decile-10 payer rate <b>6.17%</b> vs <b>1.99%</b> base = <b>3.1× lift</b>, monotonic across deciles.</td></tr>
+  <tr><td><b>Convert more (breadth)</b></td><td><b>24,669</b> high-propensity non-payers (TW 16.5k, HK 5.3k) who already wager but never bought.</td></tr>
+  <tr><td><b>Expand more (depth)</b></td><td>55% buy once; whales to $578 (p99 $75); <b>3,211</b> pcoin buyers are not PRIME subscribers.</td></tr>
+  <tr><td><b>Social / retention / geo</b></td><td>Inviters pay 3.8% vs 1.6%; retention 0d→30d lifts pay 0.18%→3.16%; TW+HK = 92% of revenue.</td></tr>
+</table>
+
+<h3>3.4 Delivery — the diagnostic (headline output)</h3>
+<p>The system's one-line answer to "convert more vs spend more": it sizes every lever on real pools and ranks them.</p>
+<table>
+  <tr><th>Lever</th><th class="n">Pool</th><th>Assumption</th><th class="n">Est. annual upside</th></tr>
+  <tr><td>Cross-sell PRIME to pcoin buyers</td><td class="n">3,211</td><td>5% subscribe × $48/yr</td><td class="n"><b>$7,706</b></td></tr>
+  <tr><td>Convert high-propensity non-payers</td><td class="n">24,669</td><td>3% convert × avg payer LTV</td><td class="n">$7,098</td></tr>
+  <tr><td>Turn one-time buyers into repeat</td><td class="n">1,786</td><td>15% 2nd purchase × incremental LTV</td><td class="n">$2,473</td></tr>
+</table>
+<p class="small muted">Directional upside on real pools, to be confirmed by live A/B. For Peeps the answer is "both,
+but PRIME first" — the subscription is barely launched (~150 real subscribers among 3.3k payers).</p>
+
+<h3>3.5 Scalability &amp; cost (10× / 100×)</h3>
+<p>Per studio the marginal cost is cents (nightly SQL + a few LLM calls). At 10–100 studios the feature store
+becomes a multi-tenant warehouse partitioned by studio; the per-player set-based logic is unchanged. Value scales
+with each studio's own data, so there is no shared-data cold-start across tenants.</p>
+
+<h2>4. Go-to-Market Difficulties <span class="small muted">(bonus)</span></h2>
+<table>
+  <tr><th>Obstacle</th><th>Honest assessment</th></tr>
+  <tr><td><b>Trust &amp; adoption</b></td><td>The system never asserts a change — it proposes an A/B and reports the revealed result, so the studio's own data decides.</td></tr>
+  <tr><td><b>Wagering &amp; regulation</b></td><td>Monetization rides a pcoin wagering loop; promoting it invites responsible-design / gambling-adjacent scrutiny (minors, odds disclosure, store policy). The system must flag, not amplify, risky targeting.</td></tr>
+  <tr><td><b>Data privacy (PDPA/GDPR)</b></td><td>We process inside the studio's own tenancy on pseudonymous IDs; a PII gate keeps player_id/email out of every output. The studio stays the data controller.</td></tr>
+  <tr><td><b>Cold-start</b></td><td>Needs the studio's own behaviour+revenue; a new game has little. Onboard with a lightweight survey SDK; revealed data comes from their existing RevenueCat.</td></tr>
+  <tr><td><b>Competition &amp; moat</b></td><td>Generic analytics could add a recommendation layer; defensibility is the workflow (owning the join + the diagnostic for studios with no data team), not the (deliberately simple) model.</td></tr>
+  <tr><td><b>Unit economics</b></td><td>~$17k/yr ranked upside for one mid-size app; at $199/mo the product costs ~14% of recovered revenue with near-zero marginal cost — high gross margin once onboarding is automated.</td></tr>
+</table>
+
+<h2>5. Conclusion</h2>
+<p>Raw data had no value here; 173k rows read naïvely would have chased cosmetics and trusted a survey that
+overstates intent. Value appeared only after the data was refined — two first-party sources joined per player,
+the wagering driver isolated, stated intent discounted to a revealed 1.92% base rate, a holdout-validated score
+built, and the result handed to an agent that proposes a test rather than a dogma. That refined output — a ranked,
+dollar-sized list of which lever to pull and which players to action — is something a studio with no data team
+would genuinely pay for. The system is modest by design; the judgment it encodes is the product.</p>
+
+<h3 class="small">Reproducibility</h3>
+<p class="small muted">Restore the dump into local Postgres, then <code>python3 src/run_pipeline.py</code> (builds the
+feature store + runs all SQL → <code>outputs/insights.json</code>), <code>python3 agent/recommend.py</code>, and
+open <code>dashboard/index.html</code>. Analytics run in SQL; the agent uses the Anthropic SDK with a deterministic
+offline fallback. A PII gate enforces aggregates-only; the raw production dump never leaves the gitignored
+<code>data/_private/</code>. README documents provenance, ethics, and limitations.</p>
+
+</body></html>

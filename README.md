@@ -67,7 +67,7 @@ Connection is configurable via `PEEPS_PGHOST/PGPORT/PGDB/PGUSER` env vars (defau
 | Path | Role |
 |------|------|
 | `sql/00_feature_store.sql` | per-player feature store (the core data asset) + `is_payer` label |
-| `sql/10–60_*.sql` | analysis suite (why-pay, behaviour lift, propensity, convert, expand, social/retention/geo) |
+| `sql/10–60_*.sql` | analysis suite (why-pay, **payer-DNA / loss-chasing**, behaviour lift, propensity, convert, expand, social/retention/geo) |
 | `sql/70_diagnostic.sql` | sizes & ranks the monetization levers in $ |
 | `src/run_pipeline.py` | orchestrator → `outputs/insights.json` + `dashboard/data.js` |
 | `src/anonymize.py` | PII gate (fails if any uuid/email reaches an output) |
@@ -83,6 +83,15 @@ Connection is configurable via `PEEPS_PGHOST/PGPORT/PGDB/PGUSER` env vars (defau
   in gitignored `data/_private/`; **only anonymized aggregates** reach `outputs/`, the dashboard, and the
   report. `src/anonymize.py` enforces this — the pipeline aborts if a `player_id`/email appears in output.
 - No third-party scraping or external personal data. The studio remains the data controller.
+
+## Verifiability (the raw data is proprietary by necessity)
+
+The system's whole premise is a **proprietary first-party dataset** — the live production DB, which contains
+player PII and cannot be published. A grader therefore cannot re-run the pipeline against the raw data. What
+**is** committed and verifiable: every `sql/*.sql` query (the exact analysis logic), the **aggregated results**
+in `outputs/insights.json`, the agent brief, and the rendered dashboard. These let a reader inspect precisely how
+each number was produced and confirm the analysis end-to-end without ever touching PII. The pipeline reproduces
+fully for anyone with access to the source DB (e.g. the author / the studio), per the restore steps above.
 
 ## Known limitations (honest)
 

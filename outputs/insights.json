@@ -110,6 +110,131 @@
       }
     ]
   },
+  "payer_dna": {
+    "loss_chasing": [
+      {
+        "ord": 1,
+        "bucket": "big_loser",
+        "players": 1104,
+        "payer_pct": 6.25
+      },
+      {
+        "ord": 2,
+        "bucket": "loser",
+        "players": 15894,
+        "payer_pct": 4.61
+      },
+      {
+        "ord": 3,
+        "bucket": "even",
+        "players": 84769,
+        "payer_pct": 2.2
+      },
+      {
+        "ord": 4,
+        "bucket": "winner",
+        "players": 8110,
+        "payer_pct": 3.9
+      },
+      {
+        "ord": 5,
+        "bucket": "big_winner",
+        "players": 689,
+        "payer_pct": 5.95
+      }
+    ],
+    "bet_size_lift": [
+      {
+        "ord": 1,
+        "bucket": "<100",
+        "players": 82633,
+        "payer_pct": 2.26
+      },
+      {
+        "ord": 2,
+        "bucket": "100-300",
+        "players": 22661,
+        "payer_pct": 3.97
+      },
+      {
+        "ord": 3,
+        "bucket": "300-800",
+        "players": 5272,
+        "payer_pct": 4.91
+      }
+    ],
+    "game_type_pay": [
+      {
+        "players": 19857,
+        "fav_game": "SPEED_CHALLENGE",
+        "payer_pct": 3.13
+      },
+      {
+        "players": 23390,
+        "fav_game": "FIGHTING",
+        "payer_pct": 3.11
+      },
+      {
+        "players": 20658,
+        "fav_game": "GOMOKU",
+        "payer_pct": 2.83
+      },
+      {
+        "players": 23616,
+        "fav_game": "LOTTERY",
+        "payer_pct": 2.71
+      },
+      {
+        "players": 11512,
+        "fav_game": "TIC_TAC_TOE",
+        "payer_pct": 2.55
+      }
+    ],
+    "payer_psychology": [
+      {
+        "grp": "whale_75+",
+        "players": 31,
+        "win_rate": 35.4,
+        "avg_games": 45,
+        "avg_wagered": 5470,
+        "avg_net_pcoins": 298
+      },
+      {
+        "grp": "regular_payer",
+        "players": 2992,
+        "win_rate": 37.7,
+        "avg_games": 25,
+        "avg_wagered": 3694,
+        "avg_net_pcoins": -308
+      }
+    ],
+    "why_never_bought": [
+      {
+        "n": 844,
+        "reason": "not_yet"
+      },
+      {
+        "n": 574,
+        "reason": "expensive"
+      },
+      {
+        "n": 433,
+        "reason": "nothing_worth"
+      },
+      {
+        "n": 99,
+        "reason": "other"
+      },
+      {
+        "n": 55,
+        "reason": "scam"
+      },
+      {
+        "n": 33,
+        "reason": "distrust"
+      }
+    ]
+  },
   "behavior_diff": {
     "predictor_lift": [
       {

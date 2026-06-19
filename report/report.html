@@ -89,7 +89,32 @@ effectively dead (only <b>0.3%</b> of players own any). The causal signature is 
 buy on day 0. Players buy currency to keep betting — so the conversion moment is the pcoin balance running low
 mid-game, not a cosmetics storefront.</div>
 
-<h3>2.3 Stated vs revealed willingness to pay (per player)</h3>
+<h3>2.3 Who pays — the gambling mechanics, not the demographics</h3>
+<p>Cross-tabbing paying against each player's betting economy (net pcoins won − wagered, per-player, over 1M
+sessions) reveals that <b>variance, not play, is the monetizer</b> — a J-curve, not a line:</p>
+<table>
+  <tr><th>Net pcoin outcome</th><th class="n">Players</th><th class="n">Payer rate</th></tr>
+  <tr><td><b>Big loser</b> (net &lt; −5k)</td><td class="n">1,104</td><td class="n"><b>6.25%</b></td></tr>
+  <tr><td>Loser</td><td class="n">15,894</td><td class="n">4.61%</td></tr>
+  <tr><td><b>Even</b> (the casual majority)</td><td class="n">84,769</td><td class="n">2.20%</td></tr>
+  <tr><td>Winner</td><td class="n">8,110</td><td class="n">3.90%</td></tr>
+  <tr><td><b>Big winner</b> (net &gt; +5k)</td><td class="n">689</td><td class="n">5.95%</td></tr>
+</table>
+<p>The casual "even" middle — 49% of the base — barely pays (2.20%). Money sits at both extremes: big losers
+<b>refill (loss-chasing)</b>, big winners are deeply-engaged high-rollers. Stake size confirms it: payer rate rises
+<b>2.26% → 3.97% → 4.91%</b> as average bet grows. And the two paying groups are psychologically opposite:</p>
+<table>
+  <tr><th>Group</th><th class="n">Avg wagered</th><th class="n">Net pcoins</th><th>Motivation</th></tr>
+  <tr><td>Whales ($75+)</td><td class="n">5,470</td><td class="n">+298 (net winner)</td><td>high-roller; bets big and wins</td></tr>
+  <tr><td>Regular payers</td><td class="n">3,694</td><td class="n">−308 (net loser)</td><td>loses, then refills to keep playing</td></tr>
+</table>
+<p>This is the core "who pays" result: the product must serve <i>two</i> psychologies — high-stakes lanes for
+whales, and fast cheap top-ups at the loss moment for refillers. Skill/action games (SPEED_CHALLENGE 3.13%,
+FIGHTING 3.11%) monetize better than pure chance (LOTTERY 2.71%). On the demand side, surveyed non-payers name
+their barrier directly: <b>844 "not yet"</b> (activation-ready), <b>574 "too expensive"</b>, 433 "nothing worth"
+— splitting the non-payer problem into activation vs. price/value.</p>
+
+<h3>2.4 Stated vs revealed willingness to pay (per player)</h3>
 <p>Joining the in-app survey (stated) to real purchases (revealed) at the player level resolves a question
 the survey alone cannot:</p>
 <table>
@@ -104,7 +129,7 @@ the survey alone cannot:</p>
 never pay — so pricing must be set off revealed behaviour, and <b>observed behaviour (wagering, 4.7×) outranks
 self-report</b>. This is the core methodological result: discount words, trust behaviour.</p>
 
-<h3>2.4 Competitor pricing &amp; the customer's willingness to pay</h3>
+<h3>2.5 Competitor pricing &amp; the customer's willingness to pay</h3>
 <p>Incumbents are descriptive, not prescriptive: RevenueCat / GameAnalytics / Firebase / Amplitude report
 metrics; none output "which lever, which players, how many dollars". Pricing-research tools (Conjoint.ly,
 Qualtrics) are survey platforms decoupled from the studio's revenue. For a single app this system surfaces
@@ -151,7 +176,8 @@ tuned on.</p>
 <table>
   <tr><th>Question</th><th>Real finding</th></tr>
   <tr><td><b>Why pay?</b></td><td>Wagering loop drives it; 86.3% wager before paying; pcoin_5 + pcoin_25 = $24.5k of $31.9k; cosmetics 0.3%.</td></tr>
-  <tr><td><b>Who pays? (behaviour diff + model)</b></td><td>Propensity holdout: decile-10 payer rate <b>6.17%</b> vs <b>1.99%</b> base = <b>3.1× lift</b>, monotonic across deciles.</td></tr>
+  <tr><td><b>Who pays? (gambling mechanics)</b></td><td>Loss-chasing J-curve (big losers 6.25% vs even 2.20%); stake size lifts paying 2.26%→4.91%; whales are net winners, regular payers net losers.</td></tr>
+  <tr><td><b>Who pays? (propensity model)</b></td><td>Holdout: decile-10 payer rate <b>6.17%</b> vs <b>1.99%</b> base = <b>3.1× lift</b>, monotonic across deciles.</td></tr>
   <tr><td><b>Convert more (breadth)</b></td><td><b>24,669</b> high-propensity non-payers (TW 16.5k, HK 5.3k) who already wager but never bought.</td></tr>
   <tr><td><b>Expand more (depth)</b></td><td>55% buy once; whales to $578 (p99 $75); <b>3,211</b> pcoin buyers are not PRIME subscribers.</td></tr>
   <tr><td><b>Social / retention / geo</b></td><td>Inviters pay 3.8% vs 1.6%; retention 0d→30d lifts pay 0.18%→3.16%; TW+HK = 92% of revenue.</td></tr>
@@ -177,7 +203,7 @@ with each studio's own data, so there is no shared-data cold-start across tenant
 <table>
   <tr><th>Obstacle</th><th>Honest assessment</th></tr>
   <tr><td><b>Trust &amp; adoption</b></td><td>The system never asserts a change — it proposes an A/B and reports the revealed result, so the studio's own data decides.</td></tr>
-  <tr><td><b>Wagering &amp; regulation</b></td><td>Monetization rides a pcoin wagering loop; promoting it invites responsible-design / gambling-adjacent scrutiny (minors, odds disclosure, store policy). The system must flag, not amplify, risky targeting.</td></tr>
+  <tr><td><b>Wagering &amp; regulation</b></td><td>Monetization rides a pcoin wagering loop, and the data shows <b>loss-chasing</b> is its strongest signal (big losers pay 2.8× the casual baseline). Promoting that invites responsible-design / gambling-adjacent scrutiny (minors, odds disclosure, store policy). The system must <b>flag</b> vulnerable loss-chasers and exclude minors, not amplify them — an ethics constraint baked into the targeting, not an afterthought.</td></tr>
   <tr><td><b>Data privacy (PDPA/GDPR)</b></td><td>We process inside the studio's own tenancy on pseudonymous IDs; a PII gate keeps player_id/email out of every output. The studio stays the data controller.</td></tr>
   <tr><td><b>Cold-start</b></td><td>Needs the studio's own behaviour+revenue; a new game has little. Onboard with a lightweight survey SDK; revealed data comes from their existing RevenueCat.</td></tr>
   <tr><td><b>Competition &amp; moat</b></td><td>Generic analytics could add a recommendation layer; defensibility is the workflow (owning the join + the diagnostic for studios with no data team), not the (deliberately simple) model.</td></tr>

@@ -57,9 +57,13 @@
     <div class="card"><table id="deciles"><thead><tr><th>Score decile</th><th class="n">Players</th><th>Actual payer rate</th></tr></thead><tbody></tbody></table>
     <p class="sub" id="decnote" style="margin-top:9px"></p></div></section>
 
+  <section><h2>⑤ Why they pay — loss-chasing (net pcoins won − wagered → payer rate)</h2>
+    <div class="card"><table id="loss"><thead><tr><th>Net pcoin outcome</th><th class="n">Players</th><th>Payer rate</th></tr></thead><tbody></tbody></table>
+    <p class="sub" id="lossnote" style="margin-top:9px"></p></div></section>
+
   <section class="two">
-    <div><h2>⑤ Convert more (breadth)</h2><div class="card" id="convert"></div></div>
-    <div><h2>⑥ Expand more (depth)</h2><div class="card" id="expand"></div></div>
+    <div><h2>⑥ Convert more (breadth)</h2><div class="card" id="convert"></div></div>
+    <div><h2>⑦ Expand more (depth)</h2><div class="card" id="expand"></div></div>
   </section>
 
   <section class="two">
@@ -110,6 +114,13 @@ else{
   $("deciles").querySelector("tbody").innerHTML=dc.decile_payer_rate.map(d=>`<tr><td>${d.decile}${d.decile===10?' (top)':''}</td>
      <td class="n">${num(d.players)}</td><td><div class="bar p"><i style="width:${100*d.payer_pct/maxD}%"></i></div><small class="muted">${d.payer_pct}%</small></td></tr>`).join("");
   $("decnote").innerHTML=`Holdout base ${dc.holdout_base_payer_pct}% → top decile <b>${dc.top_decile_payer_pct}%</b> = <b>${dc.top_decile_lift}×</b> lift. Transparent additive score, validated on data it was not tuned on.`;
+
+  // loss-chasing J-curve
+  const lc=D.payer_dna.loss_chasing, maxLC=Math.max(...lc.map(x=>x.payer_pct));
+  $("loss").querySelector("tbody").innerHTML=lc.map(b=>`<tr><td>${b.bucket}${b.bucket==='even'?' (casual majority)':''}</td>
+    <td class="n">${num(b.players)}</td><td><div class="bar ${b.payer_pct>=4?'g':'p'}"><i style="width:${100*b.payer_pct/maxLC}%"></i></div><small class="muted">${b.payer_pct}%</small></td></tr>`).join("");
+  const psy=D.payer_dna.payer_psychology||[];
+  $("lossnote").innerHTML=`<b>Variance, not play, is the monetizer:</b> both big losers (refill / loss-chasing) and big winners (high-rollers) pay far above the casual 'even' majority — a J-curve. Whales are net winners, regular payers net losers: two opposite psychologies.`;
 
   // convert / expand
   const tp=cm.target_pool;

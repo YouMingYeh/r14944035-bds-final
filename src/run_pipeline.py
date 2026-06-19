@@ -34,6 +34,7 @@ PSQL = os.environ.get("PSQL_BIN", "/opt/homebrew/opt/postgresql@17/bin/psql")
 # section name -> sql file (run in order; 00 builds the table, 30 persists the score)
 SECTIONS = [
     ("why_pay", "10_why_pay.sql"),
+    ("payer_dna", "15_payer_dna.sql"),
     ("behavior_diff", "20_behavior_diff.sql"),
     ("propensity", "30_propensity.sql"),
     ("convert_more", "40_convert_more.sql"),

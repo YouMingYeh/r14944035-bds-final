@@ -568,6 +568,84 @@
       }
     ]
   },
+  "model": {
+    "model": "logistic regression (from scratch, no ML libraries)",
+    "train_rows": 13970,
+    "test_rows": 34661,
+    "class_balance": "trained on 2633 payers + 11337 sampled non-payers",
+    "test_auc": 0.778,
+    "test_base_rate_pct": 1.99,
+    "top_decile_rate_pct": 7.79,
+    "top_decile_lift": 3.9,
+    "coefficients_by_importance": [
+      {
+        "feature": "stated_intent",
+        "coef": 0.312,
+        "odds_per_sd": 1.37
+      },
+      {
+        "feature": "n_arcade",
+        "coef": 0.283,
+        "odds_per_sd": 1.33
+      },
+      {
+        "feature": "login_days",
+        "coef": 0.138,
+        "odds_per_sd": 1.15
+      },
+      {
+        "feature": "pcoins_wagered",
+        "coef": 0.099,
+        "odds_per_sd": 1.1
+      },
+      {
+        "feature": "was_invited",
+        "coef": -0.093,
+        "odds_per_sd": 0.91
+      },
+      {
+        "feature": "n_rooms",
+        "coef": 0.086,
+        "odds_per_sd": 1.09
+      },
+      {
+        "feature": "n_feedings",
+        "coef": 0.074,
+        "odds_per_sd": 1.08
+      },
+      {
+        "feature": "max_streak",
+        "coef": 0.056,
+        "odds_per_sd": 1.06
+      },
+      {
+        "feature": "active_days",
+        "coef": 0.033,
+        "odds_per_sd": 1.03
+      },
+      {
+        "feature": "n_games_hosted",
+        "coef": 0.029,
+        "odds_per_sd": 1.03
+      },
+      {
+        "feature": "n_invited",
+        "coef": 0.022,
+        "odds_per_sd": 1.02
+      },
+      {
+        "feature": "surveyed",
+        "coef": 0.021,
+        "odds_per_sd": 1.02
+      },
+      {
+        "feature": "furniture_cnt",
+        "coef": -0.004,
+        "odds_per_sd": 1.0
+      }
+    ],
+    "note": "Coefficients are standardized (per +1 SD); odds_per_sd>1 means the feature raises pay odds."
+  },
   "revenuecat_validation": {
     "rc_total_revenue_usd": 30663.72,
     "db_total_revenue_usd": 31860.87,

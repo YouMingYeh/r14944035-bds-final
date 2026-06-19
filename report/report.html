@@ -29,32 +29,37 @@
 <body>
 
 <h1>Designing a System That Monetizes Data</h1>
-<p class="lead" style="margin-top:0"><b>Peeps Monetization Intelligence</b> — turning a #1 social game's
-first-party production data into the one decision a studio with no data team can't make: where the next
-dollar comes from, and which players to action for it.</p>
+<p class="lead" style="margin-top:0"><b>Peeps Monetization Intelligence</b> — turning a #1 consumer social app's
+first-party production data into the one decision a team with no data analyst can't make: where the next
+dollar comes from, and which users to action for it.</p>
 <p class="meta">Big Data Systems · Spring 2026 · National Taiwan University</p>
-<p class="meta">葉又銘 (Yu-Ming Yeh) · R14944035</p>
+<p class="meta">葉又銘 (Yu-Ming Yeh) · R14944035 · Founder &amp; developer of Peeps</p>
 <p class="links">GitHub: <code>https://github.com/YouMingYeh/r14944035-bds-final</code> · Live deploy: <span class="muted small">not deployed; dashboard runs from the repo</span></p>
 
-<div class="callout"><b>Thesis.</b> Peeps is a real social game (App Store #1, <b>173,336</b> players, ~30k DAU)
-that monetizes at just <b>1.92%</b> paid conversion. Its production database holds something no external
-vendor can obtain — every player's behaviour joined to their revenue. This system turns that first-party
-data into a <b>monetization diagnostic</b>: it finds <i>why</i> players pay, scores <i>who</i> will, and
-<b>ranks the levers by dollar upside</b>. Sold to small indie social-game studios that have the same data
-but no data team; <b>Peeps is the design partner and first case study.</b></div>
+<div class="callout"><b>Thesis.</b> I am the founder and developer of Peeps, a <b>consumer social app</b> (App Store #1,
+<b>173,336</b> players, ~30k DAU) where social interaction is the core and social minigames are a key
+engagement-and-monetization loop. Peeps monetizes at just <b>1.92%</b> paid conversion, and its production
+database holds something no external vendor can obtain — every user's behaviour joined to their revenue.
+I built this system first <b>to grow my own app</b> (convert more, lift revenue, guide product strategy):
+it turns that first-party data into a <b>monetization diagnostic</b> — why users pay, who will, and which
+levers pay back the most. Having proven it on Peeps, the same system is a product for <b>peer
+consumer-social studios that have the data but no data team.</b></div>
 
 <div class="kpis">
   <div class="k"><b>173,336</b><span>Players (production)</span></div>
   <div class="k"><b>1.92%</b><span>Paid conversion</span></div>
   <div class="k"><b>$31.9k</b><span>Lifetime revenue ✓RC</span></div>
   <div class="k"><b>3.9×</b><span>Stated-vs-revealed</span></div>
-  <div class="k"><b>3.1×</b><span>Model holdout lift</span></div>
+  <div class="k"><b>0.78</b><span>Model holdout AUC</span></div>
 </div>
 
 <h2>1. Target Customer</h2>
-<p>The customer is the <b>solo founder or 2–5-person studio shipping a free-to-play social or casual mobile
-game</b> — the segment that lives on in-app purchases but has <b>no data analyst and no data engineer</b>.
-Concretely: 10k–500k MAU, one or two engineers doing everything, monetization set by guesswork.</p>
+<p>The customer is the <b>solo founder or 2–5-person team shipping a free-to-play consumer social app</b>
+(social-first products with an in-app economy — social games, companion/avatar apps, community apps) — the
+segment that lives on in-app purchases but has <b>no data analyst and no data engineer</b>. Concretely:
+10k–500k MAU, one or two engineers doing everything, monetization set by guesswork. I am exactly this
+customer — I built the system for Peeps before thinking of it as a product, which is the strongest evidence
+the need is real.</p>
 <h3>The job they cannot do today</h3>
 <p>They sit on the exact data Peeps has — a behavioural database plus a RevenueCat/App Store revenue feed —
 but cannot answer the two questions that decide their revenue: <i>"why do my payers pay, and who else will?"</i>
@@ -133,7 +138,7 @@ self-report</b>. This is the core methodological result: discount words, trust b
 <p>Incumbents are descriptive, not prescriptive: RevenueCat / GameAnalytics / Firebase / Amplitude report
 metrics; none output "which lever, which players, how many dollars". Pricing-research tools (Conjoint.ly,
 Qualtrics) are survey platforms decoupled from the studio's revenue. For a single app this system surfaces
-<b>~$17k/yr of ranked, addressable upside</b> (§3.4); priced at <b>$99–$299/month</b> it costs a small fraction
+<b>~$17k/yr of ranked, addressable upside</b> (the three diagnostic levers summed, §3.4); priced at <b>$99–$299/month</b> it costs a small fraction
 of the revenue it recovers — a clear willingness-to-pay anchor.</p>
 
 <h2>3. Technical System</h2>
@@ -149,7 +154,7 @@ joins (1M+ sessions, 5.8M feedings) run in Postgres; Python only orchestrates an
   <div class="arrow">▼</div>
   <div class="row"><div class="stage">PROCESS<br>(SQL)</div><div style="flex:1">
     <div class="box"><b>Feature store</b> (<code>00</code>) — <span class="s">one row per player: demographics + engagement + wagering + social + retention + stated WTP + revealed LTV + the is_payer label.</span></div>
-    <div class="box" style="margin-top:6px"><b>Analysis suite</b> (<code>10–60</code>) — <span class="s">why-pay · behaviour lift · propensity score (holdout-validated) · convert-more · expand-more · social/retention/geo.</span></div>
+    <div class="box" style="margin-top:6px"><b>Analysis suite</b> (<code>10–60</code>) — <span class="s">why-pay · behaviour lift · propensity (score + <b>logistic model trained from scratch, AUC 0.78</b>) · convert-more · expand-more · social/retention/geo.</span></div>
     <div class="box" style="margin-top:6px"><b>Diagnostic</b> (<code>70</code>) — <span class="s">sizes each monetization lever in $ and ranks them.</span></div>
   </div></div>
   <div class="arrow">▼</div>
@@ -167,17 +172,22 @@ stream into an object store, so the feature store rebuilds incrementally and ref
 <p>The binding constraint is <b>joining many large behavioural tables per player</b> (1.0M game sessions, 5.8M
 pet feedings, 213k room memberships), not exotic compute. A set-based SQL feature store collapses each source
 per player before joining, so the whole pipeline runs in seconds and is trivially portable to a distributed
-warehouse (BigQuery / Spark SQL) by repartitioning on player_id — no logic change. The propensity model is a
-<b>transparent additive score</b> (weights on wagering, streak, activity, virality, stated intent) so a
-non-technical studio can audit why a player scored high; it is <b>validated on a 20% holdout</b> it was not
-tuned on.</p>
+warehouse (BigQuery / Spark SQL) by repartitioning on player_id — no logic change. Propensity is modelled two
+ways, both interpretable: a transparent additive score, and a <b>logistic regression trained from scratch</b>
+(no ML libraries — gradient descent on a class-balanced sample, ~120 lines of Python). On a 20% holdout it was
+not tuned on, the model scores <b>AUC 0.779</b> (top-decile lift 3.9×), and its standardized coefficients are
+themselves the "who pays" answer: <b>stated intent</b> (1.34× odds per standard deviation) and <b>arcade-minigame
+engagement</b> (1.32×) lead, being <i>invited in</i> is mildly negative (0.90×), and wagering's strong univariate
+signal is shared across correlated engagement features — so no single behaviour dominates once the rest is
+controlled for. Keeping the model interpretable is deliberate: the value proposition is a studio being able to
+<i>trust and audit</i> the recommendation, not a black box.</p>
 
 <h3>3.3 The analyses (all four monetization questions)</h3>
 <table>
   <tr><th>Question</th><th>Real finding</th></tr>
   <tr><td><b>Why pay?</b></td><td>Wagering loop drives it; 86.3% wager before paying; pcoin_5 + pcoin_25 = $24.5k of $31.9k; cosmetics 0.3%.</td></tr>
   <tr><td><b>Who pays? (gambling mechanics)</b></td><td>Loss-chasing J-curve (big losers 6.25% vs even 2.20%); stake size lifts paying 2.26%→4.91%; whales are net winners, regular payers net losers.</td></tr>
-  <tr><td><b>Who pays? (propensity model)</b></td><td>Holdout: decile-10 payer rate <b>6.17%</b> vs <b>1.99%</b> base = <b>3.1× lift</b>, monotonic across deciles.</td></tr>
+  <tr><td><b>Who pays? (trained model)</b></td><td>Logistic regression from scratch: holdout <b>AUC 0.779</b>, top-decile lift 3.9×. Learned top predictors: stated intent, arcade engagement, login frequency.</td></tr>
   <tr><td><b>Convert more (breadth)</b></td><td><b>24,669</b> high-propensity non-payers (TW 16.5k, HK 5.3k) who already wager but never bought.</td></tr>
   <tr><td><b>Expand more (depth)</b></td><td>55% buy once; whales to $578 (p99 $75); <b>3,211</b> pcoin buyers are not PRIME subscribers.</td></tr>
   <tr><td><b>Social / retention / geo</b></td><td>Inviters pay 3.8% vs 1.6%; retention 0d→30d lifts pay 0.18%→3.16%; TW+HK = 92% of revenue.</td></tr>

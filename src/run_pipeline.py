@@ -94,6 +94,11 @@ def main():
         print(f"  [analyze] {name} ({fname}) ...")
         insights[name] = run_file(fname)
 
+    # trained model (logistic regression, from scratch) — learned coefficients as insight
+    print("  [model] training logistic regression from scratch ...")
+    import train_model
+    insights["model"] = train_model.train()
+
     # cross-validation against RevenueCat (revenue source-of-truth)
     rc_path = os.path.join(ROOT, "data", "revenue_real.json")
     if os.path.exists(rc_path):

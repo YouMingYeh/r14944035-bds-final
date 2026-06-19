@@ -3,7 +3,7 @@
 **BDS Final Project — Designing a System That Monetizes Data**
 R14944035 葉又銘 · Big Data Systems, Spring 2026 · NTU
 
-> A SQL-first system that turns a #1 social game's **first-party production data** (173k players)
+> A SQL-first system that turns a #1 consumer social app's **first-party production data** (173k players)
 > into a **monetization diagnostic**: why players pay, who will pay next, and **which lever has the
 > most $ upside** — with named, actionable (anonymized) target pools. Sold to small indie game
 > studios with the same data but no data team. **Peeps is the design partner and first case study.**
@@ -70,6 +70,7 @@ Connection is configurable via `PEEPS_PGHOST/PGPORT/PGDB/PGUSER` env vars (defau
 | `sql/10–60_*.sql` | analysis suite (why-pay, **payer-DNA / loss-chasing**, behaviour lift, propensity, convert, expand, social/retention/geo) |
 | `sql/70_diagnostic.sql` | sizes & ranks the monetization levers in $ |
 | `src/run_pipeline.py` | orchestrator → `outputs/insights.json` + `dashboard/data.js` |
+| `src/train_model.py` | logistic-regression propensity model, **trained from scratch** (no ML libs); learned coefficients = the "who pays" insight |
 | `src/anonymize.py` | PII gate (fails if any uuid/email reaches an output) |
 | `agent/recommend.py` | LLM analyst → weekly action plan |
 | `dashboard/index.html` | self-contained read-only delivery surface |
